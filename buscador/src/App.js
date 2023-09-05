@@ -1,16 +1,25 @@
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import './styles.css';
+import api from "./services/api"
 
 
 function App() {
 
   const [input, setInput] = useState('')
+  const [data, setData] = useState('')
 
-
-    
-  function aoClicar() {
-    alert('O que tem dentro do input: ' + input)
+  async function aoClicar() {
+    if(input === "") {
+      alert("[ERRO] Digite um CEP Válido")
+    } try {
+      const res = await api.get(`${input}/json`)
+      setData(res.data)
+      setInput("")
+    } catch {
+      alert("[ERRO] Digite um CEP válido") 
+      setInput("")
+    }
   }
 
   return (
@@ -24,12 +33,14 @@ function App() {
         </button>
       </div>
 
-    <main className="main">
-      <h2> Cep :  19970000 </h2>
-      <span> Rua : Kathariene </span> 
-      <span> Bairro : Kathariene </span> 
-      <span> Estado : Kathariene </span> 
-    </main>
+    {Object.keys(data).length > 0 && (
+      <main className="main">
+        <h2>Cep: {data.cep}</h2>
+        <span>Rua:  {data.logradouro}</span> 
+        <span>Bairro:  {data.bairro}</span> 
+        <span>Estado:  {data.uf}</span> 
+      </main>
+    )}
 
 
 
